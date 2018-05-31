@@ -8,13 +8,12 @@ from IPython import embed
 
 import cifar_lenet5_forward
 from dataprocess import load_CIFAR10, Data_Generator, augmentation
-import cifar10_input
 
 
 BATCH_SIZE = 100
 LEARNING_RATE_BASE = 0.005
 LEARNING_RATE_DECAY = 0.99
-REGULARIZE = 0.0001
+REGULARIZE = 1e-8
 STEPS = 10000
 MOVING_AVERAGE_DECAY = 0.99
 MODEL_SAVE_PATH="./model/"
@@ -26,14 +25,16 @@ def backward(Xtr, Ytr):
     cifar_lenet5_forward.IMAGE_SIZE,
     cifar_lenet5_forward.IMAGE_SIZE,
     cifar_lenet5_forward.NUM_CHANNEL])
-    y_ = tf.placeholder(tf.float32, [None, cifar_lenet5_forward.OUTPUT_NODE])
+    #y_ = tf.placeholder(tf.float32, [None, cifar_lenet5_forward.OUTPUT_NODE])
+    y_ = tf.placeholder(tf.int32, [BATCH_SIZE,])
     y = cifar_lenet5_forward.forward(x,True,REGULARIZE)
-    embed()
     global_step = tf.Variable(0, trainable = False)
 
-    ce = tf.nn.sparse_softmax_cross_entropy_with_logits(logits = y, labels = tf.argmax(y_ , 1))
+    #ce = tf.nn.sparse_softmax_cross_entropy_with_logits(logits = y, labels = tf.argmax(y_ , 1))
+    ce = tf.nn.sparse_softmax_cross_entropy_with_logits(logits = y, labels = y_ )
     cem = tf.reduce_mean(ce)
-    loss = cem + tf.add_n(tf.get_collection('losses'))
+    loss = cem
+    #loss = cem + tf.add_n(tf.get_collection('losses'))
 
 
     learning_rate = tf.train.exponential_decay(
@@ -67,9 +68,9 @@ def backward(Xtr, Ytr):
             #image_batch, label_batch = cifar10_input.distorted_inputs(data_dir=data_dir,batch_size=BATCH_SIZE)
             image_batch, label_batch = next(batch_generator)
             image_batch = augmentation(image_batch)
-            print('Training data shape: ', image_batch.shape)
-            print('Training data shape: ', label_batch.shape)
-            #image_batch, label_batch = sess.run([image_batch, label_batch])
+            #print('Training data shape: ', image_batch.shape)
+            #print('Training data shape: ', label_batch.shape)
+
             _, loss_value, step = sess.run([train_op,loss,global_step],feed_dict = {x: image_batch, y_: label_batch})
             if i%10 == 0:
                 print("After %d training step(s), loss on training batch is %g"%(step, loss_value))

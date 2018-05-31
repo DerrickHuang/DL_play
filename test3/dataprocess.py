@@ -26,14 +26,14 @@ def load_CIFAR10(ROOT):
   for b in range(1,6):
     f = os.path.join(ROOT, 'data_batch_%d.bin' % (b,))
     X, Y = load_CIFAR_part(f)
-    Y = onehot_encoder(Y, nb_cls=10)
+    #Y = onehot_encoder(Y, nb_cls=10)
     xs.append(X)         #将所有batch整合起来
     ys.append(Y)
   Xtr = np.concatenate(xs) #使变成行向量,最终Xtr的尺寸为(50000,32,32,3)
   Ytr = np.concatenate(ys)
   del X, Y
   Xte, Yte = load_CIFAR_part(os.path.join(ROOT, 'test_batch.bin'))
-  Yte = onehot_encoder(Yte, nb_cls=10)
+  #Yte = onehot_encoder(Yte, nb_cls=10)
   return Xtr,Ytr, Xte, Yte
 
 class Data_Generator():
@@ -78,7 +78,7 @@ def augmentation(image_batch):
         #randon brightning
         #random contrast
         #standardization
-    return np.array(post_image_batch)
+    return post_image_batch
 
 def onehot_encoder(label_batch, nb_cls):
     """独热编码"""
