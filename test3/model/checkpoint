@@ -1,0 +1,6 @@
+model_checkpoint_path: "cifar_model-2045"
+all_model_checkpoint_paths: "cifar_model-2005"
+all_model_checkpoint_paths: "cifar_model-2015"
+all_model_checkpoint_paths: "cifar_model-2025"
+all_model_checkpoint_paths: "cifar_model-2035"
+all_model_checkpoint_paths: "cifar_model-2045"
