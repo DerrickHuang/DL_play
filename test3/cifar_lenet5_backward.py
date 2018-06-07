@@ -14,7 +14,7 @@ BATCH_SIZE = 100
 LEARNING_RATE_BASE = 0.005
 LEARNING_RATE_DECAY = 0.99
 REGULARIZE = 1e-8
-STEPS = 10000
+STEPS = 50000
 MOVING_AVERAGE_DECAY = 0.99
 MODEL_SAVE_PATH="./model/"
 MODEL_NAME = "cifar_model"
@@ -34,8 +34,7 @@ def backward(Xtr, Ytr):
     ce = tf.nn.sparse_softmax_cross_entropy_with_logits(logits = y, labels = y_ )
     cem = tf.reduce_mean(ce)
     loss = cem
-    #loss = cem + tf.add_n(tf.get_collection('losses'))
-
+    #loss += tf.add_n(tf.get_collection('losses'))
 
     learning_rate = tf.train.exponential_decay(
         LEARNING_RATE_BASE,
@@ -70,8 +69,7 @@ def backward(Xtr, Ytr):
             image_batch = augmentation(image_batch)
             #print('Training data shape: ', image_batch.shape)
             #print('Training data shape: ', label_batch.shape)
-
-            _, loss_value, step = sess.run([train_op,loss,global_step],feed_dict = {x: image_batch, y_: label_batch})
+            _, loss_value, step = sess.run([train_op, loss, global_step],feed_dict = {x: image_batch, y_: label_batch})
             if i%10 == 0:
                 print("After %d training step(s), loss on training batch is %g"%(step, loss_value))
                 saver.save(sess, os.path.join(MODEL_SAVE_PATH, MODEL_NAME), global_step = global_step)

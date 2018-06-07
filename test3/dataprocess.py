@@ -57,6 +57,8 @@ class Data_Generator():
             image = self.Xtr[idx:idx+batch_size]
             label = self.Ytr[idx:idx+batch_size]
             idx += batch_size
+
+            cnt_batch += 1
             yield (image, label)
 
 def random_crop(img):
